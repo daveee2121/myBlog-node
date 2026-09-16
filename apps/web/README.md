@@ -3,7 +3,7 @@
 Next.js Frontend fuer das myBlog-Monorepo.
 
 ```bash
-npm run dev --workspace @myblog/web
+npm run dev:web
 ```
 
 Die App erwartet die API unter `NEXT_PUBLIC_API_URL`, standardmaessig:
@@ -12,4 +12,7 @@ Die App erwartet die API unter `NEXT_PUBLIC_API_URL`, standardmaessig:
 http://localhost:4000/api
 ```
 
-Gemeinsame Daten-Typen kommen aus `@myblog/shared`.
+Gemeinsame Typen und zod-Schemas kommen aus `@myblog/shared`.
+API-Antworten werden an der Frontend-Grenze ebenfalls mit diesen Schemas geprüft.
+
+Fachbereiche liegen unter `features/<name>/`, `app/` enthält nur Routing.

@@ -1,14 +1,15 @@
 import Link from 'next/link'
-import { getPostById } from '@/lib/api/posts'
-import { deletePostAction } from '../actions'
+import { notFound } from 'next/navigation'
 import { buttonVariants } from '@/components/ui/button-variants'
+import { getPostById } from '@/features/posts/api-client/posts'
+import { DeletePostButton } from '@/features/posts/components/DeletePostButton'
 
-// Server Component — params ist in Next.js 15+ ein Promise
+// params ist in Next.js 15+ ein Promise
 export default async function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const post = await getPostById(id)
 
-  if (!post) return <p className="text-muted-foreground">Post nicht gefunden.</p>
+  if (!post) notFound()
 
   return (
     <div className="flex flex-col gap-6">
@@ -24,13 +25,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
       <div className="flex items-center gap-2 pt-4 border-t">
         <Link href="/posts" className={buttonVariants({ variant: 'outline' })}>Zurück</Link>
         <Link href={`/posts/${id}/edit`} className={buttonVariants({ variant: 'outline' })}>Bearbeiten</Link>
-
-        {/* Delete via Server Action — kein onClick, kein 'use client' nötig */}
-        <form action={deletePostAction.bind(null, id)}>
-          <button type="submit" className={buttonVariants({ variant: 'destructive' })}>
-            Löschen
-          </button>
-        </form>
+        <DeletePostButton id={id} />
       </div>
     </div>
   )

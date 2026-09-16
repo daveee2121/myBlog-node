@@ -1,10 +1,28 @@
-import 'dotenv/config'
 import app from './app'
+import { env } from './config/env'
+import { prisma } from './lib/prisma'
 
-const PORT = process.env.PORT || 4000
-
-app.listen(PORT, () => {
-  console.log(`Server läuft auf Port ${PORT}`)
+const server = app.listen(env.PORT, () => {
+  console.log(`Server läuft auf Port ${env.PORT}`)
 })
 
-// app.ts    →  definiert was der Server tut (handle_client)
+let isShuttingDown = false
+
+function shutdown(signal: string) {
+  if (isShuttingDown) return
+  isShuttingDown = true
+
+  console.log(`${signal} empfangen, Server wird beendet ...`)
+  server.close(async (error) => {
+    if (error) {
+      console.error('Server konnte nicht sauber beendet werden:', error)
+      process.exit(1)
+    }
+
+    await prisma.$disconnect()
+    process.exit(0)
+  })
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))

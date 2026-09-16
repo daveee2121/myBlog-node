@@ -2,16 +2,28 @@
   "name": "myblog-monorepo",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace @myblog/api & npm run dev --workspace @myblog/web",
-    "dev:web": "npm run dev --workspace @myblog/web",
-    "dev:api": "npm run dev --workspace @myblog/api",
-    "build": "npm run build --workspace @myblog/web",
-    "typecheck": "npm run typecheck --workspace @myblog/api && npm run typecheck --workspace @myblog/web",
-    "lint": "npm run lint --workspace @myblog/web"
+    "dev": "npm run build --workspace @myblog/shared && concurrently -n api,web -c blue,green \"npm run dev --workspace @myblog/api\" \"npm run dev --workspace @myblog/web\"",
+    "dev:web": "npm run build --workspace @myblog/shared && npm run dev --workspace @myblog/web",
+    "dev:api": "npm run build --workspace @myblog/shared && npm run dev --workspace @myblog/api",
+    "build": "npm run build --workspace @myblog/shared && npm run build --workspace @myblog/api && npm run build --workspace @myblog/web",
+    "start:api": "npm run start --workspace @myblog/api",
+    "start:web": "npm run start --workspace @myblog/web",
+    "typecheck": "npm run build --workspace @myblog/shared && npm run typecheck --workspace @myblog/api && npm run typecheck --workspace @myblog/web",
+    "lint": "npm run lint --workspace @myblog/web",
+    "test": "npm run test --workspace @myblog/api",
+    "db:generate": "npm run db:generate --workspace @myblog/api",
+    "db:migrate:deploy": "npm run db:migrate:deploy --workspace @myblog/api",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

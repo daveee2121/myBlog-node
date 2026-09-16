@@ -1,16 +1,11 @@
-export type Post = {
-  id: number
-  title: string
-  content: string
-  createdAt: string
-}
+import type { z } from 'zod'
+import type { createPostSchema, postSchema, updatePostSchema } from '../schemas/post.schema'
 
-export type CreatePostDto = {
-  title: string
-  content: string
-}
+// API-Vertrag: So sieht ein Post in der JSON-Antwort der API aus.
+// Nicht zu verwechseln mit dem Prisma-Typ im Backend (dort ist createdAt ein Date,
+// über JSON wird daraus ein String).
+export type PostDto = z.infer<typeof postSchema>
 
-export type UpdatePostDto = {
-  title: string
-  content: string
-}
+// Request-Typen werden aus den Schemas abgeleitet, damit Typ und Validierung nie auseinanderlaufen.
+export type CreatePostDto = z.infer<typeof createPostSchema>
+export type UpdatePostDto = z.infer<typeof updatePostSchema>
